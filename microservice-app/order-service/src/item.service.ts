@@ -14,7 +14,7 @@ export class ItemService {
         this.client = ClientProxyFactory.create({
         transport: Transport.RMQ,
         options: {
-            urls: ['amqp://user:password@rabbitmq:5672'],
+            urls: ['amqp://root:root@rabbitmq:5672'],
             queue: 'order.items',
             queueOptions: { durable: true },
         },
