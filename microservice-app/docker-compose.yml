@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orders
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:C:/xampp/mysql/data
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - rabbitmq
+
+  kitchen-service:
+    build: ./kitchen-service
+    depends_on:
+      - rabbitmq
+
+  notification-service:
+    build: ./notification-service
+    depends_on:
+      - rabbitmq
+
+volumes:
+  mysql_data:
+    driver: local
+networks: 
+  default:
+    driver: bridge
+    name: microservice_network  
